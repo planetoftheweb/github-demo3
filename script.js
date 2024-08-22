@@ -1,11 +1,9 @@
-// Add scroll event listener to change nav style on scroll
 window.addEventListener('scroll', function() {
   const heroHeight = document.querySelector('.hero').offsetHeight;
   const nav = document.querySelector('nav');
   nav.classList.toggle('scrolled', window.scrollY > heroHeight);
 });
 
-// Initialize sections visibility on document load
 document.addEventListener('DOMContentLoaded', () => {
   const sections = document.querySelectorAll('section');
   const observer = new IntersectionObserver((entries) => {
@@ -15,9 +13,24 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { threshold: 0.1 });
 
   sections.forEach(section => observer.observe(section));
+
+  // Retrieve the stored theme from localStorage on page load and apply it to the html element
+  const storedTheme = localStorage.getItem('theme');
+  if (storedTheme) {
+    document.documentElement.setAttribute('data-theme', storedTheme);
+  }
+
+  // Add event listener to the light/dark mode button to toggle the data-theme attribute on the html element between "light" and "dark"
+  const themeToggleButton = document.getElementById('theme-toggle');
+  themeToggleButton.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    // Store the current theme in localStorage to persist the user's preference
+    localStorage.setItem('theme', newTheme);
+  });
 });
 
-// Add scroll event listener to apply dynamic styles to the hero section
 window.addEventListener('scroll', () => {
   const heroSection = document.querySelector('.hero');
   const scrollDistance = window.scrollY / window.innerHeight;
@@ -25,7 +38,6 @@ window.addEventListener('scroll', () => {
   heroSection.style.filter = `blur(${scrollDistance * 10}px)`;
 });
 
-// Lightbox functionality
 const lightbox = document.getElementById('lightbox');
 const lightboxImg = lightbox.querySelector('img');
 const titleElement = lightbox.querySelector('h3');
@@ -35,7 +47,6 @@ const nextArrow = lightbox.querySelector('.next');
 const images = Array.from(document.querySelectorAll('.grid img'));
 let currentIndex = 0;
 
-// Update lightbox content based on the current image
 const updateLightboxContent = () => {
   const img = images[currentIndex];
   lightboxImg.src = img.src.replace('_tn.jpg', '.jpg');
@@ -44,10 +55,8 @@ const updateLightboxContent = () => {
   descriptionElement.textContent = altParts[1] || '';
 };
 
-// Close the lightbox
 const closeLightbox = () => lightbox.style.display = 'none';
 
-// Open lightbox on image click
 images.forEach((img, index) => {
   img.addEventListener('click', () => {
     lightbox.style.display = 'flex';
@@ -56,7 +65,6 @@ images.forEach((img, index) => {
   });
 });
 
-// Navigate through images
 prevArrow.addEventListener('click', (e) => {
   e.preventDefault();
   e.stopPropagation();
@@ -71,14 +79,12 @@ nextArrow.addEventListener('click', (e) => {
   updateLightboxContent();
 });
 
-// Close lightbox on click outside of image or on image itself
 lightbox.addEventListener('click', (e) => {
   if (e.target === lightbox || e.target === lightboxImg) {
     closeLightbox();
   }
 });
 
-// Keyboard navigation for lightbox
 document.addEventListener('keydown', (e) => {
   if (lightbox.style.display === 'flex') {
     if (e.key === 'ArrowLeft') prevArrow.click();
